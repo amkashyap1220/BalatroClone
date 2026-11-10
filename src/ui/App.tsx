@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGameStore } from './store';
 import { TooltipProvider } from './tooltip';
+import { ConfirmHost } from './confirm';
 import { MainMenu } from './screens/MainMenu';
 import { NewRunScreen } from './screens/NewRun';
 import { ChallengesScreen } from './screens/Challenges';
@@ -59,6 +60,7 @@ export function App() {
             <div key={t.id} className={`toast toast-${t.kind}`}>{t.text}</div>
           ))}
         </div>
+        <ConfirmHost />
         <div className="crt-overlay" aria-hidden />
       </div>
     </TooltipProvider>

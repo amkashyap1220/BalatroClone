@@ -608,3 +608,7 @@ h4 { margin: 10px 0 6px; color: var(--gold); }
 @media (prefers-reduced-motion: reduce) {
   .ed-shimmer .edition-overlay, .ed-aurora .edition-overlay, .ed-spectrum .edition-overlay, .pat-legendary, .menu-fan-card, .logo-flux { animation: none; }
 }
+
+.confirm-back { z-index: 1050; }
+.confirm-msg { font-size: 1.05rem; margin: 4px 0 18px; text-align: center; }
+.confirm-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }

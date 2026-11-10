@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { askConfirm } from '../confirm';
 import type { GameStore } from '../store';
 import type { Screen } from '../App';
 import { DECKS } from '../../engine/content/decks';
@@ -23,12 +24,15 @@ export function NewRunScreen({ store, go }: { store: GameStore; go: (s: Screen) 
   const unlocked = isDeckUnlocked(p, deckId);
   const start = () => {
     if (!unlocked) return;
-    if (store.savedRun && !confirm('Starting a new run will abandon your saved run. Continue?')) return;
-    if (store.savedRun) store.abandonRun();
-    const run = createRun({ deckId, heat, seed: seed.trim() || undefined });
-    store.startRun(run);
-    store.sfx('deal');
-    go('game');
+    const begin = () => {
+      if (store.savedRun) store.abandonRun();
+      const run = createRun({ deckId, heat, seed: seed.trim() || undefined });
+      store.startRun(run);
+      store.sfx('deal');
+      go('game');
+    };
+    if (store.savedRun) askConfirm('Starting a new run will abandon your saved run. Continue?').then((ok) => { if (ok) begin(); });
+    else begin();
   };
   return (
     <div className="page">

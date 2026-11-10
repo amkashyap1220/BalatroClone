@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { askConfirm } from '../confirm';
 import type { GameStore } from '../store';
 import type { Screen } from '../App';
 import type { Card, RunState, ScoreResult, ScoreStep } from '../../engine/types';
@@ -156,9 +157,9 @@ export function GameScreen({ store, go }: { store: GameStore; go: (s: Screen) =>
 
   const doSellCharm = (uid: string) => {
     const c = run.charms.find((x) => x.uid === uid)!;
-    if (store.settings.confirmSell && !confirm(`Sell ${CHARM_MAP[c.id].name} for $${charmSellValue(run, c, mods)}?`)) return;
-    const r = store.act(sellCharm(run, uid), 'sell');
-    if (!r.error) setSelCharm(null);
+    const sell = () => { const r = store.act(sellCharm(run, uid), 'sell'); if (!r.error) setSelCharm(null); };
+    if (store.settings.confirmSell) askConfirm(`Sell ${CHARM_MAP[c.id].name} for $${charmSellValue(run, c, mods)}?`).then((ok) => { if (ok) sell(); });
+    else sell();
   };
 
   const doUseCons = (uid: string) => {
@@ -430,9 +431,11 @@ export function GameScreen({ store, go }: { store: GameStore; go: (s: Screen) =>
             <button className="btn" onClick={() => { setModal(null); go('settings'); }}>Settings</button>
             <button className="btn" onClick={() => { store.quitToMenu(); go('menu'); }}>Save & Main Menu</button>
             <button className="btn btn-danger" onClick={() => {
-              if (!confirm('Abandon this run? It will count as a loss.')) return;
-              store.abandonRun();
-              go('menu');
+              askConfirm('Abandon this run? It will count as a loss.').then((ok) => {
+                if (!ok) return;
+                store.abandonRun();
+                go('menu');
+              });
             }}>Abandon Run</button>
             <p className="muted small">Seed: <b>{run.seed}</b></p>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { askConfirm } from '../confirm';
 import type { GameStore } from '../store';
 import { resetAll } from '../../engine/save';
 import { newProfile } from '../../engine/progression';
@@ -54,11 +55,13 @@ export function SettingsScreen({ store, back }: { store: GameStore; back: () => 
           <h3>Data</h3>
           <p className="muted">Progress is stored in this browser.</p>
           <button className="btn btn-danger" onClick={() => {
-            if (!confirm('Erase all progress, unlocks and the saved run? This cannot be undone.')) return;
-            resetAll();
-            store.setProfile(newProfile());
-            store.clearSaved();
-            store.toast('Progress reset.');
+            askConfirm('Erase all progress, unlocks and the saved run? This cannot be undone.').then((ok) => {
+              if (!ok) return;
+              resetAll();
+              store.setProfile(newProfile());
+              store.clearSaved();
+              store.toast('Progress reset.');
+            });
           }}>Reset all progress</button>
         </section>
       </div>

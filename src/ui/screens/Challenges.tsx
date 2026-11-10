@@ -1,4 +1,5 @@
 import React from 'react';
+import { askConfirm } from '../confirm';
 import type { GameStore } from '../store';
 import type { Screen } from '../App';
 import { CHALLENGES } from '../../engine/content/challenges';
@@ -8,11 +9,14 @@ import { createRun } from '../../engine/run';
 export function ChallengesScreen({ store, go }: { store: GameStore; go: (s: Screen) => void }) {
   const p = store.profile;
   const start = (id: string) => {
-    if (store.savedRun && !confirm('Starting a challenge will abandon your saved run. Continue?')) return;
-    if (store.savedRun) store.abandonRun();
-    store.startRun(createRun({ challengeId: id }));
-    store.sfx('deal');
-    go('game');
+    const begin = () => {
+      if (store.savedRun) store.abandonRun();
+      store.startRun(createRun({ challengeId: id }));
+      store.sfx('deal');
+      go('game');
+    };
+    if (store.savedRun) askConfirm('Starting a challenge will abandon your saved run. Continue?').then((ok) => { if (ok) begin(); });
+    else begin();
   };
   return (
     <div className="page">
