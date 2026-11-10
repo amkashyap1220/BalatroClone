@@ -1,0 +1,2 @@
+Bungee (David Jonathan Ross) and Outfit (Rodrigo Fuenzalida) are bundled here so the game works offline.
+Both are licensed under the SIL Open Font License 1.1: https://openfontlicense.org

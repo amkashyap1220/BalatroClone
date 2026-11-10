@@ -2,6 +2,8 @@
    ROYAL FLUX — visual identity
    Emerald felt, brass trim, cream cards, neon arcade accents.
    ═══════════════════════════════════════════════════════════════ */
+@font-face { font-family: 'Bungee'; font-style: normal; font-weight: 400; font-display: swap; src: url('../assets/fonts/bungee-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Outfit'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../assets/fonts/outfit-latin.woff2') format('woff2'); }
 :root {
   --felt: #0e5a43;
   --felt-dark: #052820;
@@ -574,33 +576,191 @@ h4 { margin: 10px 0 6px; color: var(--gold); }
 
 /* ═══════════════ RESPONSIVE ═══════════════ */
 @media (max-width: 900px) {
-  body { overflow: auto; }
-  .app-root { overflow: auto; }
-  .game { grid-template-columns: 1fr; height: auto; min-height: 100%; padding: 8px; gap: 8px; }
-  .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow: visible; }
-  .blind-panel, .hand-score { grid-column: span 1; }
-  .round-score { grid-column: span 1; }
-  .stat-grid { grid-column: span 2; grid-template-columns: repeat(4, 1fr); }
-  .side-buttons { grid-column: span 2; }
-  .side-foot { display: none; }
-  .top-row { flex-direction: column; gap: 6px; }
-  .charm-row, .cons-row { width: 100%; }
-  .charm-slots, .cons-slots { overflow-x: auto; padding-bottom: 36px; }
-  .stage { overflow: visible; }
-  .hand { --overlap: calc((100vw - 120px) / var(--n) - var(--cw)); }
   .shop-lower { grid-template-columns: 1fr; }
   .info-cols { grid-template-columns: 1fr; }
-  .blind-card.current { transform: none; }
 }
 @media (max-width: 560px) {
-  :root { --cw: 48px; }
-  .sidebar { grid-template-columns: 1fr; }
-  .stat-grid { grid-column: span 1; }
-  .side-buttons { grid-column: span 1; }
-  .btn-play-hand, .btn-discard { min-width: 0; flex: 1; }
-  .blind-card { width: 100%; }
   .page-head .search { width: 100%; margin-left: 0; }
   .menu-fan { display: none; }
+}
+
+/* ═══════════════ PHONE / TOUCH ═══════════════ */
+html { -webkit-text-size-adjust: 100%; }
+body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+/* Keep content clear of notches, rounded corners and the home indicator. */
+.page { padding-top: max(20px, env(safe-area-inset-top)); padding-bottom: max(48px, calc(env(safe-area-inset-bottom) + 24px));
+  padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left)); padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right)); }
+.menu-screen { padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+.game { padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+.end-overlay, .modal-back { padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+.modal { max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overscroll-behavior: contain; }
+.toasts { bottom: max(14px, env(safe-area-inset-bottom)); }
+
+/* No sticky hover effects after a tap; long press shows details instead. */
+@media (hover: none) {
+  .btn:hover:not(:disabled) { filter: none; transform: none; }
+  .deck-option:hover, .coll-item:hover, .shop-item:hover, .cons-card:hover { transform: none; }
+  .charm-card:hover:not(.selected) { transform: none; }
+  .hand-slot:hover { z-index: var(--z) !important; }
+  .hand-slot .pcard:hover:not(.selected) { transform: none; }
+  kbd { display: none; }
+  .pcard, .charm-card, .cons-card, .shop-art, .blind-card-art, .blind-panel { -webkit-touch-callout: none; -webkit-user-drag: none; }
+}
+
+/* Phone portrait: the whole table fits one screen with no page scroll. */
+@media (max-width: 820px) and (orientation: portrait) {
+  * { --ch: calc(var(--cw) * 1.4); }
+  body, .app-root { overflow: hidden; }
+  .toasts { left: 50%; transform: translateX(-50%); top: max(10px, env(safe-area-inset-top)); bottom: auto; flex-direction: column; }
+
+  .game { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; height: 100%;
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
+
+  /* HUD */
+  .sidebar { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto; grid-template-areas: "blind round btns" "hand hand hand" "stats stats stats";
+    gap: 5px; overflow: visible; }
+  .blind-panel { grid-area: blind; border-radius: 10px; box-shadow: none; border-width: 1px; display: flex; flex-direction: column; }
+  .blind-name { font-size: 0.7rem; padding: 3px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+  .blind-body { padding: 2px 8px 4px; gap: 6px; flex: 1; }
+  .blind-body > .boss-token, .blind-body > .blind-chip { display: none; }
+  .blind-body .muted.small, .blind-body .t-hint { font-size: 0.62rem; }
+  .target { font-size: 1.1rem; line-height: 1.1; }
+  .round-score { grid-area: round; flex-direction: column; align-items: flex-start; justify-content: center; padding: 3px 8px; border-radius: 10px; border-width: 1px; }
+  .round-score .label { font-size: 0.62rem; }
+  .round-score .value { font-size: 1.15rem; line-height: 1.15; }
+  .side-buttons { grid-area: btns; grid-template-columns: 1fr; gap: 5px; }
+  .side-buttons .btn { font-size: 0.66rem; padding: 0.5em 0.65em; }
+  .hand-score { grid-area: hand; display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 10px; border-radius: 10px; border-width: 1px; }
+  .hand-name { flex: 1; min-width: 0; text-align: left; font-size: 0.82rem; min-height: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cm-row { margin-top: 0; flex: 0 0 58%; gap: 4px; }
+  .chips-box, .mult-box { font-size: 1.05rem; padding: 3px 7px; border-radius: 8px; }
+  .x { font-size: 1rem; }
+  .hand-score.idle { display: none; }
+  .hand-total { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; background: rgba(6, 22, 19, 0.94); border-radius: inherit; font-size: 1.5rem; }
+  .violation { position: absolute; left: 0; right: 0; top: calc(100% + 3px); z-index: 6; margin: 0; padding: 3px 8px; border-radius: 8px; background: #4a0d1f; font-size: 0.72rem; }
+  .stat-grid { grid-area: stats; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  .stat { padding: 2px 4px; border-radius: 8px; border-width: 1px; display: flex; align-items: baseline; justify-content: center; gap: 5px; }
+  .stat span { display: inline; font-size: 0.58rem; letter-spacing: 0.04em; }
+  .stat b { font-size: 1rem; }
+  .side-foot { display: none; }
+
+  /* Charms and consumables share one strip, sized to the slot count. */
+  .table { gap: 4px; }
+  .top-row { flex-direction: row; gap: 5px; align-items: stretch;
+    --slot-w: min(54px, calc((100vw - 16px - 5px - 24px - (var(--cs) + var(--ks) - 2) * 4px) / (var(--cs) + var(--ks)))); }
+  .charm-row { flex: 1; }
+  .cons-row { flex: none; }
+  .charm-row, .cons-row { padding: 2px 6px 6px; border-radius: 10px; }
+  .row-label { font-size: 0.56rem; margin-bottom: 2px; letter-spacing: 0.04em; white-space: nowrap; }
+  .charm-slots, .cons-slots { --cw: var(--slot-w); gap: 4px; overflow: visible; padding-bottom: 0; }
+  .slot-empty { border-radius: 6px; }
+  .charm-card.selected { transform: translateY(-3px); }
+  .item-actions { left: 50%; transform: translateX(-50%); }
+  .charm-wrap:first-child .item-actions { left: 0; transform: none; }
+  .cons-row .item-actions { left: auto; right: 0; transform: none; }
+  .item-actions .btn.tiny { font-size: 0.78rem; padding: 0.45em 0.7em; }
+
+  /* Centre stage scrolls on its own when the shop or blind list is taller than the space. */
+  .stage { overflow-y: auto; overflow-x: hidden; align-items: flex-start; justify-content: flex-start; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .stage > * { margin: auto; }
+  .stage-title { font-size: 1.1rem; margin-bottom: 6px; }
+  .play-area { min-height: 0; --cw: min(58px, 17vw); }
+  .play-area::before { width: 86%; }
+  .play-area::after { font-size: 1.5rem; }
+  .boss-reminder { font-size: 0.75rem; padding: 6px 10px; }
+  .round-banner span { font-size: 1.6rem; padding: 8px 40px; }
+
+  /* Hand and controls */
+  .hand-zone { --cw: min(64px, 16vw); gap: 4px; padding: 0 0 2px; min-height: calc(var(--ch) * 1.2); }
+  .hand { --overlap: min(4px, calc((100vw - 16px - var(--cw) * 0.72 - 4px - 34px - var(--cw)) / max(1, var(--n) - 1) - var(--cw))); padding: calc(var(--ch) * 0.24) 12px 0 22px; }
+  .deck-pile { width: calc(var(--cw) * 0.72); margin-bottom: 14px; }
+  .deck-count { bottom: -16px; font-size: 0.68rem; }
+  .actions { gap: 6px; padding: 2px 0 0; flex-wrap: nowrap; }
+  .btn-play-hand, .btn-discard { min-width: 0; flex: 1; font-size: 0.95rem; padding: 0.75em 0.4em; }
+  .sort-group { padding: 4px; gap: 4px; flex-direction: column; border-radius: 10px; }
+  .sort-group > span { display: none; }
+  .sort-group .btn { font-size: 0.66rem; padding: 0.4em 0.7em; }
+
+  /* Blind select: current blind first and full, others compact. */
+  .blind-select { padding: 4px 0; }
+  .blind-cards { flex-direction: column; align-items: stretch; gap: 8px; flex-wrap: nowrap; }
+  .blind-card { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: space-between; text-align: left; padding: 8px 10px; gap: 6px 10px; }
+  .blind-card.current { transform: none; order: -1; }
+  .blind-card-head { flex: 1 1 100%; font-size: 0.9rem; }
+  .blind-card-art { padding: 0; }
+  .blind-card-art .blind-chip.big, .blind-card-art .boss-token { width: 46px !important; height: 46px !important; font-size: 1.2rem !important; }
+  .blind-desc { flex: 1 1 0; min-width: 140px; min-height: 0; font-size: 0.78rem; }
+  .blind-card .btn-play { flex: 1 1 100%; }
+  .blind-card:not(.current) .blind-desc, .blind-card:not(.current) .blind-reward { display: none; }
+  .blind-card:not(.current) .blind-card-art .blind-chip.big, .blind-card:not(.current) .blind-card-art .boss-token { width: 34px !important; height: 34px !important; font-size: 0.9rem !important; }
+  .blind-card:not(.current) .blind-card-head { flex: 1 1 0; }
+  .blind-card:not(.current) .skip-box { display: none; }
+  .blind-state { padding: 0; font-size: 0.8rem; }
+  .skip-box { grid-template-columns: auto 1fr auto; }
+  .btn-skip.small { grid-column: auto; }
+
+  /* Shop */
+  .shop { padding: 8px 8px 10px; border-width: 2px; border-radius: 14px; }
+  .shop-header { gap: 6px; margin-bottom: 14px; }
+  .shop-controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .shop-controls .btn-next { grid-column: 1 / -1; order: -1; }
+  .shop-controls .btn { font-size: 0.8rem; padding: 0.6em 0.5em; }
+  .shop-shelf { gap: 8px; padding: 14px 6px 8px; }
+  .main-shelf { --cw: min(70px, 19vw); min-height: 0; }
+  .shop-lower { gap: 14px; margin-top: 14px; --cw: min(62px, 17vw); }
+  .shop-buttons .btn.small { font-size: 0.8rem; padding: 0.5em 0.9em; }
+  .pack-choices { --cw: min(72px, 20vw); gap: 8px; }
+  .cashout { width: 100%; }
+
+  /* New run: decks scroll sideways so the details and Start stay in view. */
+  .deck-grid { display: flex; overflow-x: auto; gap: 8px; margin: 0 -4px 12px; padding: 4px 4px 8px; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+  .deck-option { flex: 0 0 86px; padding: 6px; scroll-snap-align: start; }
+  .deck-label { font-size: 0.75rem; }
+}
+@media (max-width: 380px) {
+  .hand-name { font-size: 0.72rem; }
+  .chips-box, .mult-box { font-size: 0.92rem; }
+}
+
+/* Phone landscape: short screens get a tighter desktop layout. */
+@media (orientation: landscape) and (max-height: 520px) {
+  :root { --cw: clamp(44px, 5.4vw, 70px); }
+  .game { gap: 8px; grid-template-columns: clamp(180px, 22vw, 230px) 1fr;
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
+  .sidebar { gap: 6px; }
+  body, .app-root { overflow: hidden; }
+  .blind-body { padding: 3px 10px; }
+  .blind-body > .boss-token, .blind-body > .blind-chip { display: none; }
+  .blind-name { padding: 3px; font-size: 0.75rem; }
+  .round-score { padding: 3px 10px; }
+  .hand-name { font-size: 0.85rem; min-height: 0; }
+  .cm-row { margin-top: 2px; }
+  .chips-box, .mult-box { font-size: 1.05rem; padding: 3px 4px; }
+  .side-buttons .btn { padding: 0.4em 0.6em; }
+  .stage-title { font-size: 1.1rem; margin-bottom: 4px; }
+  .stage { overflow-y: auto; align-items: flex-start; justify-content: flex-start; }
+  .stage > * { margin: auto; }
+  .blind-card { padding: 8px; gap: 4px; width: clamp(150px, 26vw, 220px); }
+  .blind-card.current { transform: none; }
+  .blind-card-art .blind-chip.big, .blind-card-art .boss-token { width: 44px !important; height: 44px !important; font-size: 1.1rem !important; }
+  .blind-desc { min-height: 0; font-size: 0.75rem; }
+  .main-shelf { --cw: clamp(48px, 6vw, 70px); min-height: 0; }
+  .shop-lower { grid-template-columns: 2fr 1fr; --cw: clamp(44px, 5vw, 60px); }
+  .hand-zone { --cw: clamp(44px, 6vw, 64px); }
+  .target, .round-score .value { font-size: 1.15rem; }
+  .hand-score { padding: 6px; }
+  .stat { padding: 2px 6px; }
+  .stat b { font-size: 1.05rem; }
+  .side-foot { display: none; }
+  .charm-row, .cons-row { padding: 2px 8px 6px; }
+  .charm-slots { --cw: clamp(38px, 4.4vw, 60px); }
+  .cons-slots { --cw: clamp(36px, 4vw, 54px); }
+  * { --ch: calc(var(--cw) * 1.4); }
+  .hand-zone { padding-bottom: 4px; min-height: calc(var(--ch) * 1.15); }
+  .hand { padding-top: calc(var(--ch) * 0.2); }
+  .actions { padding: 0; }
+  .btn-play-hand, .btn-discard { min-width: 120px; font-size: 0.9rem; padding: 0.55em 1em; }
 }
 
 /* Reduced motion */

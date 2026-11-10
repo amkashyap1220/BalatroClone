@@ -221,7 +221,7 @@ export function GameScreen({ store, go }: { store: GameStore; go: (s: Screen) =>
     const off = i - mid;
     const rot = n > 1 ? off * Math.min(3, 24 / n) : 0;
     const lift = Math.min(18, Math.abs(off) * Math.abs(off) * (n > 8 ? 0.9 : 1.6));
-    return { ['--rot' as string]: `${rot}deg`, ['--lift' as string]: `${lift}px`, ['--i' as string]: i, zIndex: i + 1 };
+    return { ['--rot' as string]: `${rot}deg`, ['--lift' as string]: `${lift}px`, ['--i' as string]: i, ['--z' as string]: i + 1, zIndex: i + 1 };
   };
 
   const onDragStartCard = (id: string) => (e: React.DragEvent) => { dragRef.current = { kind: 'card', id }; e.dataTransfer.effectAllowed = 'move'; };
@@ -269,7 +269,7 @@ export function GameScreen({ store, go }: { store: GameStore; go: (s: Screen) =>
           <span className="label">Round score</span>
           <span className="value">{fmt(scoreShown)}</span>
         </div>
-        <div className={`hand-score ${violation ? 'warn' : ''}`}>
+        <div className={`hand-score ${violation ? 'warn' : ''} ${!round && !anim ? 'idle' : ''}`}>
           <div className="hand-name">{handLabel || ' '}{handLevel ? <small> lvl.{handLevel}</small> : null}</div>
           <div className="cm-row">
             <div className="chips-box">{fmt(dispChips)}</div>
@@ -296,7 +296,7 @@ export function GameScreen({ store, go }: { store: GameStore; go: (s: Screen) =>
 
       {/* ───────── Table ───────── */}
       <main className="table">
-        <div className="top-row">
+        <div className="top-row" style={{ ['--cs' as string]: mods.charmSlots, ['--ks' as string]: mods.consumableSlots } as React.CSSProperties}>
           <div className="charm-row" onDragOver={(e) => e.preventDefault()}>
             <div className="row-label">Charms {run.charms.length}/{mods.charmSlots}</div>
             <div className="charm-slots">
