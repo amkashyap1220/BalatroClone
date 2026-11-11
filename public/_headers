@@ -1,0 +1,14 @@
+# Cache rules for Cloudflare (read from dist/ at deploy, never served as a file).
+
+# Built bundles have a hash of their contents in their names, so they never change.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The service worker and the page are checked on every visit, so a new deploy
+# reaches installed copies of the game the next time they open online.
+/sw.js
+  Cache-Control: no-cache
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
