@@ -14,12 +14,24 @@ npm run build:single # one self-contained HTML file in dist-single/
 npm run preview      # serve the production build
 ```
 
+## Play on your phone
+
+Royal Flux is an installable web app (PWA). Pushes to the default branch build and deploy to GitHub Pages through `.github/workflows/pages.yml`, which needs **Settings → Pages → Source: GitHub Actions** turned on once.
+
+- **iPhone / iPad (Safari):** open the site, tap **Share**, then **Add to Home Screen**.
+- **Android (Chrome):** open the site, then tap **Install app** (or menu ⋮ → **Add to Home screen**).
+
+The installed app opens full screen, works offline after the first visit, and keeps its own save. On iPhone, the home-screen app has separate storage from Safari, so a run started in the browser doesn't carry over.
+
+Icons are rendered from `public/icons/icon.svg` with `node scripts/make-icons.cjs`. The service worker is generated at build time in `vite.config.ts`, so every build precaches exactly the files it emits.
+
 ## Controls
 
 - **Click** cards to select them, and **drag** to reorder.
 - **P**: play the hand. **D**: discard. **R** / **S**: sort by rank or suit.
 - **1–9**: toggle cards. **Esc**: options.
 - Hover anything to see its tooltip.
+- On touch screens: **tap** to select, **long-press** anything to see its tooltip.
 
 ## Layout
 
