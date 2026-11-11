@@ -1,0 +1,15 @@
+{
+	// Royal Flux, at royalflux.alexanderk.dev. The game is plain static files, so
+	// this Worker has no script: Cloudflare serves dist/ directly.
+	"name": "royal-flux",
+	"compatibility_date": "2026-10-20",
+	// Before every deploy: run the engine tests, then build the game into dist/.
+	// A failing test stops the deploy.
+	"build": {
+		"command": "npm test && npm run build"
+	},
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "single-page-application"
+	}
+}

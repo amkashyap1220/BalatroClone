@@ -9,7 +9,8 @@
     "build:single": "vite build --mode single",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "react": "^19.3.1",
@@ -23,6 +24,7 @@
     "typescript": "^5.9.3",
     "vite": "^8.3.7",
     "vite-plugin-singlefile": "^2.3.4",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "wrangler": "4.158.0"
   }
 }
